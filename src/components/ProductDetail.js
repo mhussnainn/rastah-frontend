@@ -148,6 +148,8 @@ function ProductDetails({ product }) {
 
 // 🔍 Full Product Detail Page
 export default function ProductDetail({ product }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -165,7 +167,6 @@ export default function ProductDetail({ product }) {
     : [];
 
   const allImages = [mainThumbnail, ...otherImages];
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const goPrev = () => {
     if (currentIndex > 0) setCurrentIndex(currentIndex - 1);

@@ -77,8 +77,8 @@ export default function HomePage() {
       <div className=" ml-8 mb-8">
         <h1 className="text-2xl font-bold mb-2">CORE COLLECTION</h1>
         <div className="flex justify-left gap-4 mb-6">
-          <button className="px-4 py-1 border border-gray-300 rounded-full text-sm hover:border-black transition-colors">Men's</button>
-          <button className="px-4 py-1 border border-gray-300 rounded-full text-sm hover:border-black transition-colors">Women's</button>
+          <button className="px-4 py-1 border border-gray-300 rounded-full text-sm hover:border-black transition-colors">{`Men's`}</button>
+          <button className="px-4 py-1 border border-gray-300 rounded-full text-sm hover:border-black transition-colors">{`Women's`}</button>
         </div>
       </div>
       <ProductCard products={products} />
