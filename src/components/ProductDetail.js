@@ -1,14 +1,47 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 
 const STRAPI_URL = "https://victorious-prize-eeb50f2b32.strapiapp.com";
 
-// 🖼️ Main Image Component
-function MainImage({ src, alt }) {
+// 🖼️ Main Image Component with swipe support
+function MainImage({ src, alt, onSwipeLeft, onSwipeRight }) {
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const minSwipeDistance = 50;
+
+  function onTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function onTouchMove(e) {
+    touchEndX.current = e.touches[0].clientX;
+  }
+
+  function onTouchEnd() {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    if (distance > minSwipeDistance) {
+      // Swipe left → next image
+      onSwipeLeft?.();
+    } else if (distance < -minSwipeDistance) {
+      // Swipe right → prev image
+      onSwipeRight?.();
+    }
+    // reset
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  }
+
   return (
-    <div className="relative w-[500px] h-[800px] rounded-lg">
+    <div
+      className="relative w-[500px] h-[800px] rounded-lg touch-pan-y"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <Image
         src={src}
         alt={alt}
@@ -22,10 +55,10 @@ function MainImage({ src, alt }) {
   );
 }
 
-// 🧩 Thumbnails Component with fixed dimensions
+// 🧩 Thumbnails Component (desktop only)
 function Thumbnails({ images, selectedIndex, onSelect }) {
   return (
-    <div className="flex flex-col space-y-4 mr-8 -ml-6">
+    <div className="hidden sm:flex flex-col space-y-4 mr-8 -ml-6">
       {images.map((img, index) => (
         <div
           key={index}
@@ -69,9 +102,7 @@ function Accordion({ title, children }) {
           isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="pb-4 text-sm text-gray-700">
-          {children}
-        </div>
+        <div className="pb-4 text-sm text-gray-700">{children}</div>
       </div>
     </div>
   );
@@ -119,25 +150,23 @@ function ProductDetails({ product }) {
       </div>
 
       <div className="border px-4 py-2 rounded flex items-center gap-2 w-fit text-sm font-medium">
-        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5 text-gray-700"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
           <path d="M3 3h18l-2 13H5L3 3z" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M16 16a2 2 0 1 1-4 0m6 0a2 2 0 1 1-4 0" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         Free Shipping Over $200
       </div>
 
-      <Accordion title="PRODUCT DETAILS">
-        {product.description || 'No additional details provided.'}
-      </Accordion>
-      <Accordion title="SIZE & FIT">
-        Regular fit. Choose your standard size.
-      </Accordion>
-      <Accordion title="SHIPPING">
-        Free shipping on orders over $200. Delivered within 5–7 business days.
-      </Accordion>
-      <Accordion title="RETURNS">
-        Free returns within 14 days of delivery.
-      </Accordion>
+      <Accordion title="PRODUCT DETAILS">{product.description || 'No additional details provided.'}</Accordion>
+      <Accordion title="SIZE & FIT">Regular fit. Choose your standard size.</Accordion>
+      <Accordion title="SHIPPING">Free shipping on orders over $200. Delivered within 5–7 business days.</Accordion>
+      <Accordion title="RETURNS">Free returns within 14 days of delivery.</Accordion>
     </div>
   );
 }
@@ -146,41 +175,34 @@ function ProductDetails({ product }) {
 export default function ProductDetail({ product }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const mainThumbnail = product?.thumbnail?.url
-    ? `${product.thumbnail.url}`
-    : '/placeholder.jpg';
+  const mainThumbnail = product?.thumbnail?.url ? `${product.thumbnail.url}` : '/placeholder.jpg';
 
-  const otherImages = product?.images?.length
-    ? product.images.map((img) => `${img.url}`)
-    : [];
+  const otherImages = product?.images?.length ? product.images.map((img) => `${img.url}`) : [];
 
   const allImages = [mainThumbnail, ...otherImages];
 
   const goPrev = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const goNext = () => {
-    if (currentIndex < allImages.length - 1) setCurrentIndex(currentIndex + 1);
+    setCurrentIndex((prev) => (prev < allImages.length - 1 ? prev + 1 : prev));
   };
 
   return (
     <div className="min-h-screen py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-8 items-start">
-          {/* Thumbnails */}
-          <Thumbnails
-            images={allImages}
-            selectedIndex={currentIndex}
-            onSelect={setCurrentIndex}
-          />
+          {/* Thumbnails hidden on mobile */}
+          <Thumbnails images={allImages} selectedIndex={currentIndex} onSelect={setCurrentIndex} />
 
-          {/* Main Image with Arrows */}
+          {/* Main Image with arrows hidden on mobile */}
           <div className="flex items-center space-x-4">
             <button
               onClick={goPrev}
               disabled={currentIndex === 0}
-              className="px-1 py-0 rounded text-gray-700 hover:text-gray-900 disabled:text-gray-400"
+              className="hidden sm:inline px-1 py-0 rounded text-gray-700 hover:text-gray-900 disabled:text-gray-400"
+              aria-label="Previous Image"
             >
               <svg
                 className="w-7 h-10"
@@ -193,12 +215,18 @@ export default function ProductDetail({ product }) {
               </svg>
             </button>
 
-            <MainImage src={allImages[currentIndex]} alt={product?.name || 'Product Image'} />
+            <MainImage
+              src={allImages[currentIndex]}
+              alt={product?.name || 'Product Image'}
+              onSwipeLeft={goNext}
+              onSwipeRight={goPrev}
+            />
 
             <button
               onClick={goNext}
               disabled={currentIndex === allImages.length - 1}
-              className="px-1 py-0 rounded text-gray-700 hover:text-gray-900 disabled:text-gray-400"
+              className="hidden sm:inline px-1 py-0 rounded text-gray-700 hover:text-gray-900 disabled:text-gray-400"
+              aria-label="Next Image"
             >
               <svg
                 className="w-7 h-10"

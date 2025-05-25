@@ -19,10 +19,18 @@ export default function ProductGrid({ products }) {
     }
   };
 
+  // Helper to truncate product name to first 3 words
+  const truncateWords = (text, wordLimit = 3) => {
+    if (!text) return "";
+    const words = text.split(" ");
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(" ") + "...";
+  };
+
   return (
     <div className="relative w-full mx-auto py-8">
-      {/* Arrows in top-right corner */}
-      <div className="absolute top-0 right-0 flex gap-3 z-20 pr-6">
+      {/* Arrows: only visible on desktop */}
+      <div className="absolute top-0 right-0 hidden sm:flex gap-3 z-20 pr-6">
         <button
           onClick={() => handleScroll("left")}
           className="p-2 rounded-full shadow-md hover:bg-white transition-all"
@@ -111,8 +119,13 @@ export default function ProductGrid({ products }) {
 
                 {/* Product Info */}
                 <div className="mt-4 text-center">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide ">
-                    {product.name || "Unnamed Product"}
+                  <h3 className="text-xs font-semibold uppercase tracking-wide">
+                    {/* Mobile: truncated */}
+                    <span className="inline sm:hidden">
+                      {truncateWords(product.name || "Unnamed Product", 3)}
+                    </span>
+                    {/* Desktop: full name */}
+                    <span className="hidden sm:inline">{product.name || "Unnamed Product"}</span>
                   </h3>
                   <p className="mt-1 text-sm font-semibold ">
                     Rs.{product.price?.toLocaleString() || "N/A"}
