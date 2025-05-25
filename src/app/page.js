@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { getAllProducts } from "@/lib/api";
 import ProductCard from "../components/ProductCard";
-import SkeletonCard from "../components/SkeletonCard";
 import Image from "next/image";
 
 export default function HomePage() {
