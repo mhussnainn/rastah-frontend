@@ -1,59 +1,9 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
 
 const STRAPI_URL = "https://victorious-prize-eeb50f2b32.strapiapp.com";
-
-// 🖼️ Main Image Component with swipe support
-function MainImage({ src, alt, onSwipeLeft, onSwipeRight }) {
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-
-  const minSwipeDistance = 50;
-
-  function onTouchStart(e) {
-    touchStartX.current = e.touches[0].clientX;
-  }
-
-  function onTouchMove(e) {
-    touchEndX.current = e.touches[0].clientX;
-  }
-
-  function onTouchEnd() {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    if (distance > minSwipeDistance) {
-      // Swipe left → next image
-      onSwipeLeft?.();
-    } else if (distance < -minSwipeDistance) {
-      // Swipe right → prev image
-      onSwipeRight?.();
-    }
-    // reset
-    touchStartX.current = 0;
-    touchEndX.current = 0;
-  }
-
-  return (
-    <div
-      className="relative w-[500px] h-[800px] rounded-lg touch-pan-y"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
-        className="object-cover"
-        priority
-        quality={90}
-      />
-    </div>
-  );
-}
 
 // 🧩 Thumbnails Component (desktop only)
 function Thumbnails({ images, selectedIndex, onSelect }) {
@@ -181,6 +131,7 @@ export default function ProductDetail({ product }) {
 
   const allImages = [mainThumbnail, ...otherImages];
 
+  // Only desktop arrows, hidden on mobile
   const goPrev = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
@@ -196,7 +147,7 @@ export default function ProductDetail({ product }) {
           {/* Thumbnails hidden on mobile */}
           <Thumbnails images={allImages} selectedIndex={currentIndex} onSelect={setCurrentIndex} />
 
-          {/* Main Image with arrows hidden on mobile */}
+          {/* Main Image with arrows visible only on desktop */}
           <div className="flex items-center space-x-4">
             <button
               onClick={goPrev}
@@ -215,12 +166,17 @@ export default function ProductDetail({ product }) {
               </svg>
             </button>
 
-            <MainImage
-              src={allImages[currentIndex]}
-              alt={product?.name || 'Product Image'}
-              onSwipeLeft={goNext}
-              onSwipeRight={goPrev}
-            />
+            <div className="relative w-[500px] h-[650px] rounded-lg">
+              <Image
+                src={allImages[currentIndex]}
+                alt={product?.name || 'Product Image'}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+                className="object-cover"
+                priority
+                quality={90}
+              />
+            </div>
 
             <button
               onClick={goNext}
@@ -240,10 +196,8 @@ export default function ProductDetail({ product }) {
             </button>
           </div>
 
-          {/* Product Info */}
-          <div className={`transition-opacity duration-300 ${!product ? 'opacity-0' : 'opacity-100'}`}>
-            {product && <ProductDetails product={product} />}
-          </div>
+          {/* Product Details */}
+          <ProductDetails product={product} />
         </div>
       </div>
     </div>
