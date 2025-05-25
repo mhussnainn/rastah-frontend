@@ -28,7 +28,7 @@ export default async function ProductPage({ params }) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600">Product Not Found</h1>
-          <p className="mt-4 text-gray-600">Sorry, we couldn't find the product you're looking for.</p>
+          <p className="mt-4 text-gray-600">Sorry, the product you are looking for is not available.</p>
         </div>
       </div>
     );

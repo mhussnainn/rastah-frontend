@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { getAllProducts } from "@/lib/api";
 import ProductCard from "../components/ProductCard";
+import Image from "next/image";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -44,7 +45,7 @@ export default function HomePage() {
 <main className="mx-auto px-0">
   {/* Hero Section */}
   <section className="relative w-full h-full mb-12">
-    <img
+    <Image
       src="/Slider.jpeg" // Ensure this image exists in /public
       alt="Core Collection Banner"
       className="w-full h-full object-cover"
