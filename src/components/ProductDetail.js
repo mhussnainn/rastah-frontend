@@ -141,8 +141,9 @@ export default function ProductDetail({ product }) {
   };
 
   return (
+
     <div className="min-h-screen py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-[136px]">
         <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-8 items-start">
           {/* Thumbnails hidden on mobile */}
           <Thumbnails images={allImages} selectedIndex={currentIndex} onSelect={setCurrentIndex} />

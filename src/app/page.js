@@ -25,21 +25,7 @@ export default function HomePage() {
     fetchProducts();
   }, []);
 
-  if (loading) {
-    return (
-      <main className="container mx-auto py-16 px-4 text-center">
-        <p className="mt-4 text-gray-700 text-lg font-medium">Products are loading...</p>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="container px-4 py-8">
-        <p className="text-red-600">{error}</p>
-      </main>
-    );
-  }
+  
 
   return (
     <main className="mx-auto">
@@ -65,11 +51,6 @@ export default function HomePage() {
       className="object-cover"
       style={{ objectPosition: "top" }}
     />
-  </div>
-
-  {/* RASTAH logo at top */}
-  <div className="absolute top-6 w-full z-10 text-center px-4">
-    <h1 className="text-4xl sm:text-5xl font-bold tracking-widest text-white">RASTAH</h1>
   </div>
 
   {/* Centered Hero Content */}
@@ -112,10 +93,18 @@ export default function HomePage() {
   </div>
 </div>
 
-
+<main className="w-full text-center">
+  {loading ? (
+    <p className="mt-4 text-gray-700 text-lg py-32 px-4 font-medium">Products are loading...</p>
+  ) : error ? (
+    <p className="text-red-600">{error}</p>
+  ) : (
+    <ProductCard products={products} />
+  )}
+</main>
 
   {/* Product Cards stay in original layout */}
-  <ProductCard products={products} />
+  
 </section>
 
     </main>

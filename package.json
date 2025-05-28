@@ -12,7 +12,8 @@
     "lucide-react": "^0.511.0",
     "next": "15.3.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,10 +23,9 @@
     "tailwindcss": "^4"
   },
   "browserslist": [
-  "last 2 chrome versions",
-  "last 2 firefox versions",
-  "last 2 safari versions",
-  "last 2 edge versions"
+    "last 2 chrome versions",
+    "last 2 firefox versions",
+    "last 2 safari versions",
+    "last 2 edge versions"
   ]
-
 }
