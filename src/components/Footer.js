@@ -120,8 +120,8 @@ export default function Footer() {
           </button>
           <div className="text-gray-300 text-xs">
             Copyright © 2025, Rastah. All rights reserved. See our{' '}
-            <a href="/terms-of-use" className="underline">terms of use</a> and{' '}
-            <a href="/privacy-policy" className="underline">privacy notice</a>.
+            <Link href="/terms-of-use" className="underline">terms of use</Link> and{' '}
+            <Link href="/privacy-policy" className="underline">privacy notice</Link>.
           </div>
         </div>
       </div>
